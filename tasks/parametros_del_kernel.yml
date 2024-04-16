@@ -1,0 +1,11 @@
+- name: Configuración de /etc/sysctl.conf
+  become: true
+  ansible.builtin.template:
+    src: sysctl.conf.j2
+    dest: "/etc/sysctl.conf"
+    backup: true
+    mode: '0644'
+  register: parametros_kernel_modificados
+  notify:
+    - Mostrar_configuracion_parametros_kernel
+    - Reiniciar_host

@@ -1,0 +1,12 @@
+---
+- name: Comprobar si la contraseña de root es segura
+  become: true
+  ansible.builtin.shell: |
+    test $(awk -F: '$1 == "root" && $2 ~ /^\$6\$/ {print $2}' /etc/shadow)
+  register: algoritmo_password_root
+  failed_when: false
+  changed_when: algoritmo_password_root.rc != 0
+  notify:
+    - Notificar_password_insegura_de_root
+    - Forzar_cambio_de_password_de_root
+  check_mode: false

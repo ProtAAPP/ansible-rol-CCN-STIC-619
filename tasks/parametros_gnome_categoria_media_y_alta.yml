@@ -1,0 +1,14 @@
+- name: Incluyendo tareas de configuración de gnome para sistemas de categoría básica
+  ansible.builtin.include_tasks: parametros_gnome.yml
+
+- name: Fijar timeout de inactividad para las sesiones de usuario (15 minutos) # En el script pone 15 minutos en el comentario pero lo fija a 10 minutos.
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/profile.local
+    line: "{{ item }}"
+    create: true
+    mode: '0644'
+  with_items:
+    - TMOUT=600
+    - export TMOUT
+  notify: Aplicar_cambios_parametros_gnome

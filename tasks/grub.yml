@@ -1,0 +1,31 @@
+- name: Comprobar si la password de grub está configurada en grub (comprobación sacada de CLARA)
+  become: true
+  ansible.builtin.shell:
+    cmd: grep -qi "root.*sha512" /etc/grub.d/40_custom
+  register: pass_grub_set
+  failed_when: pass_grub_set.stderr != ''
+  changed_when: pass_grub_set.rc != 0
+  notify: Configurar_usuario_y_password_de_root_en_grub
+  check_mode: false
+
+- name: Montar /boot o /boot/efi para modificar la configuración de grub
+  ansible.builtin.include_tasks:
+    file: montar_boot.yml
+
+- name: Permisos del fichero de configuración de grub
+  become: true
+  ansible.builtin.file:
+    path: "/boot/grub2/grub.cfg"
+    mode: '0600'
+  when: not uefi.stat.exists
+
+- name: Permisos del fichero de configuración de grub con UEFI
+  become: true
+  ansible.builtin.file:
+    path: "/boot/efi/EFI/{{ ansible_distribution | lower }}/grub.cfg"
+    mode: '0600'
+  when: uefi.stat.exists
+
+- name: Desmontar /boot o /boot/efi después de modificar la configuración de grub
+  ansible.builtin.include_tasks:
+    file: desmontar_boot.yml

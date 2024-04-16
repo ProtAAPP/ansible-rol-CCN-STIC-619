@@ -1,0 +1,52 @@
+- name: Configurar pam_tally2.so para auth
+  become: true
+  community.general.pamd:
+    backup: true
+    name: "{{ item }}"
+    type: auth
+    control: required
+    module_path: pam_env.so
+    state: after
+    new_type: auth
+    new_control: required
+    new_module_path: pam_tally2.so
+    module_arguments: "deny=8 unlock_time={{ unlock_time }} #"
+  loop:
+    - password-auth
+    - system-auth
+  notify:
+    - Reiniciar_host
+
+- name: Asegurar que el parámetro unlock_time=3600 de pam_tally2.so está configurado para cumplir con lo auditado por CLARA
+  become: true
+  community.general.pamd:
+    backup: true
+    name: "{{ item }}"
+    type: auth
+    control: required
+    module_path: pam_tally2.so
+    module_arguments: "deny=8 unlock_time={{ unlock_time }}"
+    state: args_present
+  loop:
+    - password-auth
+    - system-auth
+  notify:
+    - Reiniciar_host
+
+- name: Configurar pam_tally2.so para account
+  become: true
+  community.general.pamd:
+    backup: true
+    name: "{{ item }}"
+    type: account
+    control: required
+    module_path: pam_unix.so
+    state: after
+    new_type: account
+    new_control: required
+    new_module_path: pam_tally2.so
+  loop:
+    - password-auth
+    - system-auth
+  notify:
+    - Reiniciar_host

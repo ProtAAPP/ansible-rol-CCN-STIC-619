@@ -1,0 +1,43 @@
+- name: Instalar yum-utils para trabajar
+  become: true
+  ansible.builtin.yum:
+    name: yum-utils
+    state: present
+
+- name: Eliminar paquetes instalados como dependencias que ya no son necesarios
+  become: true
+  ansible.builtin.yum:
+    autoremove: true
+
+# TODO: Testear esta tarea al cambiar el comando
+- name: Limpiar ficheros temporales de los repositorios
+  become: true
+  ansible.builtin.command: yum-complete-transaction --cleanup-only
+  register: comando_output
+  changed_when: comando_output.stdout | regex_search('^[1-9][0-9]*') and comando_output.rc == 0
+
+- name: Buscar paquetes huérfanos
+  ansible.builtin.command: "package-cleanup --orphans -q"
+  register: paquetes_huerfanos
+  changed_when: false
+
+- name: Buscar kernels antiguos
+  become: true
+  ansible.builtin.command: "package-cleanup --oldkernels -q"
+  register: kernels_antiguos
+  changed_when: false
+
+- name: Buscar paquetes que son dependencias sin uso (leaf nodes)
+  ansible.builtin.command: "package-cleanup --leaves -q"
+  register: paquetes_hoja
+  changed_when: false
+
+- name: Eliminar kernels antiguos, paquetes huerfanos y dependencias sin uso
+  become: true
+  ansible.builtin.yum:
+    name: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ paquetes_huerfanos.stdout | split }}"
+    - "{{ kernels_antiguos.stdout | split }}"
+    - "{{ paquetes_hoja.stdout | split }}"
