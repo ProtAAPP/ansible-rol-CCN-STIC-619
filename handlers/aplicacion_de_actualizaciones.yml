@@ -1,3 +1,8 @@
-- name: Mostrar_actualizaciones
+- name: Mostrar_resultado_actualizaciones
   ansible.builtin.debug:
     var: actualizaciones.results
+
+- name: Mostrar_cambios_actualizaciones
+  ansible.builtin.debug:
+    var: actualizaciones.changes
+  when: actualizaciones.changes is defined

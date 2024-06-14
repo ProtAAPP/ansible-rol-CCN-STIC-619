@@ -3,6 +3,10 @@
   ansible.builtin.include_tasks:
     file: grub.yml
 
+- name: Reconfigurar_grub
+  ansible.builtin.include_tasks:
+    file: reconfigurar_grub.yml
+
 - name: Contrasena_de_root
   ansible.builtin.import_tasks:
     file: contrasena_de_root.yml

@@ -8,6 +8,17 @@
   notify: Configurar_usuario_y_password_de_root_en_grub
   check_mode: false
 
+- name: Deshabilitar el arranque con contraseña de grub
+  become: true
+  ansible.builtin.replace:
+    dest: /etc/grub.d/10_linux
+    regexp: '#\s*CLASS="--class gnu-linux --class gnu --class os --unrestricted"'
+    #regexp: '^#\s*CLASS=(.*)$'
+    replace: 'CLASS="--class gnu-linux --class gnu --class os --unrestricted"'
+    #replace: 'CLASS=\1'
+    backup: true
+  notify: Reconfigurar_grub
+
 - name: Montar /boot o /boot/efi para modificar la configuración de grub
   ansible.builtin.include_tasks:
     file: montar_boot.yml
