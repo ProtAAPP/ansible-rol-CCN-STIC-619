@@ -11,4 +11,4 @@
   with_items:
     - TMOUT=600
     - export TMOUT
-  notify: Aplicar_cambios_parametros_gnome
+  notify: 619_Aplicar_cambios_parametros_gnome
