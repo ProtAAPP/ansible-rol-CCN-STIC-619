@@ -1,4 +1,4 @@
-- name: Update_dconf
+- name: Update dconf
   become: true
   ansible.builtin.command: dconf update
   register: update_dconf_output

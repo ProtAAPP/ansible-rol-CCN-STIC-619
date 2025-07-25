@@ -15,7 +15,7 @@
     - password-auth
     - system-auth
   notify:
-    - Reiniciar_host
+    - 619_Reiniciar_host
 
 - name: Asegurar que el parámetro unlock_time=3600 de pam_tally2.so está configurado para cumplir con lo auditado por CLARA
   become: true
@@ -31,7 +31,7 @@
     - password-auth
     - system-auth
   notify:
-    - Reiniciar_host
+    - 619_Reiniciar_host
 
 - name: Configurar pam_tally2.so para account
   become: true
@@ -49,4 +49,4 @@
     - password-auth
     - system-auth
   notify:
-    - Reiniciar_host
+    - 619_Reiniciar_host

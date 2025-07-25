@@ -1,8 +1,4 @@
 ---
-- name: Montar /boot o /boot/efi para aplicar las actualizaciones
-  ansible.builtin.include_tasks:
-    file: montar_boot.yml
-
 - name: Reconfigurar grub
   when: not uefi.stat.exists
   become: true
@@ -16,7 +12,3 @@
   ansible.builtin.command: grub2-mkconfig -o /boot/efi/EFI/{{ ansible_distribution | lower }}/grub.cfg
   register: grub2_mkconfig_uefi_output
   changed_when: grub2_mkconfig_uefi_output.rc == 0
-
-- name: Desmontar /boot o /boot/efi después de modificar la configuración de grub
-  ansible.builtin.include_tasks:
-    file: desmontar_boot.yml
